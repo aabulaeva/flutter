@@ -158,14 +158,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   _chrono(){
     if(_count==0){
-    if( _wifi==_monrouteur && int.parse(_luxString)<5 && (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])<10.5 && (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])>9.0 && (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])<0.5 && (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])>(-0.5) ){
+    if( _wifi==_monrouteur && int.parse(_luxString)<5 && (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])<10.5 && (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])>9.0 && (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])<0.1 && (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])>(-0.1) && (_accelerometerValues[0] > 9.5 || _accelerometerValues[1]>9.5 || _accelerometerValues[2] > 9.5) ){
       _count=1;
       leftButtonPressed();
 
     }
     }
     else{
-      if( _wifi!=_monrouteur || int.parse(_luxString)>5 || (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])>10.5 || (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])<9.0 || (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])>0.5 || (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])<(-0.5) ){
+      if( _wifi!=_monrouteur || int.parse(_luxString)>5 || (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])>10.5 || (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])<9.0 || (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])>0.1 || (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])<(-0.1) ){
       _count=0;
       rightButtonPressed();
     }
