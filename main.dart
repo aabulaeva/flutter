@@ -292,7 +292,6 @@ class _MyHomePageState extends State<MyHomePage> {
     print("Lux value: $luxValue");
     setState(() {
       _luxString = "$luxValue";
-      if(luxValue<5)
         _chrono();
      
     });
