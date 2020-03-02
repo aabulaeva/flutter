@@ -70,8 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<StreamSubscription<dynamic>> _streamSubscriptions =
       <StreamSubscription<dynamic>>[];
 
-
-  String _luxString = 'Unknown';
+  String _luxString = new Lux().toString();
   Light _light;
   String _wifi="inconnu";
   int _count=0;
@@ -244,7 +243,8 @@ class _MyHomePageState extends State<MyHomePage> {
            new RepaintBoundary(
             child: new SizedBox(
               height: 22.0,
-              child: new Lux(),
+              child: 
+              new Text('Running on : $_luxString '),
             ),
           ),
           new Padding(
