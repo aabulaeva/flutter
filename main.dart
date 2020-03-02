@@ -9,6 +9,7 @@ import 'package:sensors/sensors.dart';
 import 'package:light/light.dart';
 
 import 'time.dart';
+import 'lux.dart';
 
 
 // Sets a platform override for desktop to avoid exceptions. See
@@ -54,7 +55,7 @@ class MyHomePage extends StatefulWidget {
 
 
 class _MyHomePageState extends State<MyHomePage> {
-     final Dependencies dependencies = new Dependencies();
+  final Dependencies dependencies = new Dependencies();
 
   Timer timer;
   int milliseconds;
@@ -240,9 +241,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             padding: const EdgeInsets.all(16.0),
           ),
-          new Padding(
-          child: new Text('Running on: $_luxString\n'),
-           padding: const EdgeInsets.all(16.0),
+           new RepaintBoundary(
+            child: new SizedBox(
+              height: 22.0,
+              child: new Lux(),
+            ),
           ),
           new Padding(
           child: new Text('mon routeur : $_wifi\n'),
@@ -262,6 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: new MinutesAndSeconds(dependencies: dependencies),
             ),
           ),
+         
           
           
           ],
@@ -367,5 +371,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 }
+
 
 
