@@ -6,10 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sensors/sensors.dart';
-import 'package:light/light.dart';
 
 import 'time.dart';
 import 'lux.dart';
+import 'acce.dart';
+import 'gyro.dart';
 
 
 // Sets a platform override for desktop to avoid exceptions. See
@@ -65,16 +66,15 @@ class _MyHomePageState extends State<MyHomePage> {
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
   
-  List<double> _accelerometerValues;
-  List<double> _gyroscopeValues;
-  List<StreamSubscription<dynamic>> _streamSubscriptions =
-      <StreamSubscription<dynamic>>[];
+  
 
-  String _luxString = new Lux().toString();
-  Light _light;
+  //String luxString = new Lux().getLL().getLux();
+  String _luxString ='ujk';
   String _wifi="inconnu";
   int _count=0;
    String _monrouteur= "inconnu";
+  final Lux Luxi = new Lux();
+
 
   void leftButtonPressed() {
     setState(() {
@@ -103,20 +103,11 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     timer = new Timer.periodic(new Duration(milliseconds: dependencies.timerMillisecondsRefreshRate), callback);
     _controller.addListener(_print);
-    initPlatformState();
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-    _streamSubscriptions.add(accelerometerEvents.listen((AccelerometerEvent event) {
-      setState(() {
-        _accelerometerValues = <double>[event.x, event.y, event.z];
-              });
-    }));
-    _streamSubscriptions.add(gyroscopeEvents.listen((GyroscopeEvent event) {
-      setState(() {
-        _gyroscopeValues = <double>[event.x, event.y, event.z];
-              });
-    }));
+    
+   
     
   }
 
@@ -139,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
   }
-  _chrono(){
+  /*_chrono(){
     if(_count==0){
     if( _wifi==_monrouteur && int.parse(_luxString)<5 && (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])<10.5 && (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])>9.0 && (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])<0.1 && (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])>(-0.1) && (_accelerometerValues[0] > 9.5 || _accelerometerValues[1]>9.5 || _accelerometerValues[2] > 9.5) ){
       _count=1;
@@ -155,6 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     
   }
+  */
   void dispose() {
     timer?.cancel();
     timer = null;
@@ -162,9 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _connectivitySubscription.cancel();
     super.dispose();
-    for (StreamSubscription<dynamic> subscription in _streamSubscriptions) {
-      subscription.cancel();
-    }
+   
   }
   _print(){
     print(_controller.text);
@@ -192,10 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> accelerometer =
-        _accelerometerValues?.map((double v) => v.toStringAsFixed(1))?.toList();
-    final List<String> gyroscope =
-        _gyroscopeValues?.map((double v) => v.toStringAsFixed(1))?.toList();
+    
 
 
     return Scaffold(
@@ -222,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Text("actualiser mon routeur de wifi"),
                 ),
           new Center(child: Text('Connection Status: $_connectionStatus')),
-          new Padding(
+          /*new Padding(
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -231,6 +218,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             padding: const EdgeInsets.all(16.0),
           ),
+          */
+          /*
           new Padding(
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -240,13 +229,44 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             padding: const EdgeInsets.all(16.0),
           ),
+          */
            new RepaintBoundary(
             child: new SizedBox(
               height: 22.0,
               child: 
-              new Text('Running on : $_luxString '),
+              //new Text(new Lux().getLL().getLux()),
+              Luxi,
+              //new Text('Running on : $luxString'),
             ),
           ),
+          new RepaintBoundary(
+            child: new SizedBox(
+              height: 22.0,
+              child: 
+              //new Text(new Lux().getLL().getLux()),
+              new Acce(),
+              //new Text('Running on : $luxString'),
+            ),
+          ),
+          new RepaintBoundary(
+            child: new SizedBox(
+              height: 22.0,
+              child: 
+              //new Text(new Lux().getLL().getLux()),
+              new Gyro(),
+              //new Text('Running on : $luxString'),
+            ),
+          ),
+          new RepaintBoundary(
+            child: new SizedBox(
+              height: 22.0,
+              child: 
+              new Text(Luxi.getLL().getLux(Luxi.getLL())),
+              //Luxi,
+              //new Text('Running on : $luxString'),
+            ),
+          ),
+          
           new Padding(
           child: new Text('mon routeur : $_wifi\n'),
            padding: const EdgeInsets.all(16.0),
@@ -275,25 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
  
-  void _onData(int luxValue) async {
-    print("Lux value: $luxValue");
-    setState(() {
-      _luxString = "$luxValue";
-        _chrono();
-     
-    });
-  }
-  void _onDone() {}
-
-  void _onError(error) {
-    // Handle the error
-  }
-    Future<void> initPlatformState() async {
-    _light = new Light();
-    _light.lightSensorStream.listen(_onData,
-        onError: _onError, onDone: _onDone, cancelOnError: true);
-      
-  }
+  
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     switch (result) {
