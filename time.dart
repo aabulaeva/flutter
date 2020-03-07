@@ -1,6 +1,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
+
 
 class ElapsedTime {
   final int hundreds;
@@ -33,12 +35,88 @@ class MinutesAndSecondsState extends State<MinutesAndSeconds> {
   int hours =0;
   int minutes = 0;
   int seconds = 0;
+  Timer timer;
+  int milliseconds;
 
   @override
-  void initState() {
-    dependencies.timerListeners.add(onTick);
-    super.initState();
+  void leftButtonPressed() {
+    setState(() {
+      if (dependencies.stopwatch.isRunning) {
+        print("${dependencies.stopwatch.elapsedMilliseconds}");
+      } else {
+        dependencies.stopwatch.reset();
+        dependencies.stopwatch.start();
+      }
+    });
   }
+
+  void rightButtonPressed() {
+    setState(() {
+      if (dependencies.stopwatch.isRunning) {
+        dependencies.stopwatch.stop();
+      } 
+    });
+  }
+
+
+
+    
+  @override
+  void initState() {
+    super.initState();
+    dependencies.timerListeners.add(onTick);
+    timer = new Timer.periodic(new Duration(milliseconds: dependencies.timerMillisecondsRefreshRate), callback);
+    leftButtonPressed();
+    
+   
+    
+  }
+
+  @override
+  void callback(Timer timer) {
+    if (milliseconds != dependencies.stopwatch.elapsedMilliseconds) {
+      milliseconds = dependencies.stopwatch.elapsedMilliseconds;
+      final int hundreds = (milliseconds / 10).truncate();
+      final int seconds = (hundreds / 100).truncate();
+      final int minutes = (seconds / 60).truncate();
+      final int hours = (minutes / 60).truncate();
+      final ElapsedTime elapsedTime = new ElapsedTime(
+        hundreds: hundreds,
+        seconds: seconds,
+        minutes: minutes,
+        hours : hours,
+      );
+      for (final listener in dependencies.timerListeners) {
+        listener(elapsedTime);
+      }
+    }
+  }
+  /*_chrono(){
+    if(_count==0){
+    if( _wifi==_monrouteur && int.parse(_luxString)<5 && (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])<10.5 && (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])>9.0 && (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])<0.1 && (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])>(-0.1) && (_accelerometerValues[0] > 9.5 || _accelerometerValues[1]>9.5 || _accelerometerValues[2] > 9.5) ){
+      _count=1;
+      leftButtonPressed();
+
+    }
+    }
+    else{
+      if( _wifi!=_monrouteur || int.parse(_luxString)>5 || (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])>10.5 || (_accelerometerValues[0]+_accelerometerValues[1]+_accelerometerValues[2])<9.0 || (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])>0.1 || (_gyroscopeValues[0]+_gyroscopeValues[1]+_gyroscopeValues[2])<(-0.1) ){
+      _count=0;
+      rightButtonPressed();
+    }
+    }
+    
+  }
+  */
+  void dispose() {
+    timer?.cancel();
+    timer = null;
+
+    super.dispose();
+   
+  }
+
+  
 
   void onTick(ElapsedTime elapsed) {
     if (elapsed.hours != hours || elapsed.seconds != seconds) {
