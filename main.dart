@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:app/control.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +8,6 @@ import 'lux.dart';
 import 'acce.dart';
 import 'gyro.dart';
 import 'connect.dart';
-import 'control.dart';
 
 
 // Sets a platform override for desktop to avoid exceptions. See
@@ -57,7 +55,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final Dependencies dependencies = new Dependencies();
 
-  
+  final _controller = TextEditingController();
 
 
   
@@ -77,6 +75,22 @@ class _MyHomePageState extends State<MyHomePage> {
   
 
   @override
+   void initState() {
+  _controller.addListener(_print);
+    super.initState();
+  }
+    
+
+  void dispose() {
+   
+    super.dispose();
+   _controller.dispose();
+  }
+
+ _print(){
+    print(_controller.text);
+  }
+
   Widget build(BuildContext context) {
     
 
@@ -94,10 +108,32 @@ class _MyHomePageState extends State<MyHomePage> {
             child: new SizedBox(
               height: 22.0,
               child: 
+              TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                      hintText: "wifiIP....", labelText: 'wifiIP'),
+                ),
+         
+                
               //new Text(new Lux().getLL().getLux()),
-              new Control(),
+              
               //new Text('Running on : $luxString'),
             ),
+          ),
+          new RepaintBoundary(
+            child: new SizedBox(
+              height: 22.0,
+              child: 
+           new RaisedButton(
+                  onPressed: () async {
+                    _wifi=_controller.text;
+                     print(_wifi);
+                     
+                    
+                  },
+                  child: const Text("actualiser mon routeur de wifi"),
+                ),
+                 ),
           ),
            new RepaintBoundary(
             child: new SizedBox(
@@ -139,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: new SizedBox(
               height: 22.0,
               child: 
-              new Text(Luxi.getLL().getLux(Luxi.getLL())),
+              new Text(Luxi.getLL().getLux()),
               //Luxi,
               //new Text('Running on : $luxString'),
             ),

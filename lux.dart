@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:light/light.dart';
 
 class Lux extends StatefulWidget {
@@ -55,10 +53,10 @@ class LuxState extends State<Lux> {
  
 
   @override
-  String getLux(LuxState){
+  String getLux(){
         print("Lux STR getteurs: $luxString");
 
-    return LuxState.luxString;
+    return luxString;
   }
   Widget build(BuildContext context) {
     print("Lux STR ici 2: $luxString");
